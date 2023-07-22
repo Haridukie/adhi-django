@@ -4,6 +4,11 @@ from movieapp.models import movies
 from movieapp.models import movies2,reg
 from movieapp.form import regForm
 from movieticket import settings
+
+from django.core.mail import send_mail
+from django.shortcuts import render
+
+
 # Create your views here.
 def index(request):
     m = movies2.objects.all()
@@ -21,7 +26,21 @@ def signup(request):
     if request.method=="POST":
         form=regForm(request.POST)
         if form.is_valid():
-            form.save()
+            instance = form.save()
+
+             # Retrieve the recently inserted value
+            name = instance.name 
+            email = instance.email # Replace 'field_name' with the actual field name containing the value
+
+
+            # Send email with the retrieved value
+            subject = 'testing'
+            message = f'ticket booked successfully: {name}'  # Modify the message as per your requirements
+            from_email = 'hariveneno15@gmail.com'  # Replace with your email address
+            recipient_list = [email]  # Replace with the recipient's email address
+
+            send_mail(subject, message, from_email, recipient_list)
+
             return redirect("/booked")
     else:
         form=regForm()
